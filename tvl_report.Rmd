@@ -1,0 +1,176 @@
+---
+title: 'DeFi TVL Explorer: Q1 2024 to Q1 2025'
+author: "Alexander"
+date: "2025-05-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(scales)
+```
+
+## Introduction
+
+This project analyzes Total Value Locked (TVL) trends for eight DeFi protocols (Uniswap, Aave, Maple, Compound, Lido, EigenLayer, Curve, Ethena) to identify which had the fastest TVL growth from Q1 2024 to Q1 2025 [or Jan to Mar 2024 if 2025 data unavailable]. The analysis follows the Google Data Analytics process: Ask, Prepare, Process, Analyze, Share, Act. Data is sourced from DeFiLlama.
+
+## Ask
+
+* Question: Which DeFi protocol had the fastest TVL growth?
+
+* Metric: Percentage change in average TVL from Q1 2024 to Q1 2025 [or Jan to Mar 2024].
+
+* Stakeholders: DeFi investors and enthusiasts.
+
+## Prepare
+
+* Fetched TVL data using Python via the DeFiLlama API (slugs: uniswap, aave, maple, compound-finance, lido, eigenlayer, curve-finance, ethena).
+
+* Saved as defi_tvl_data.csv.
+
+* Protocols: Uniswap, Aave, Maple, Compound, Lido, EigenLayer, Curve, Ethena.
+
+## Process
+
+* Cleaned data in Google Sheets (see data_cleaning_log.txt):
+
+  * Removed 2 rows with missing values.
+
+  * Removed 0 duplicate rows.
+
+  * Validated TVL_USD (removed 0 negative values).
+
+  * Sorted by Protocol and Date.
+
+* Exported as cleaned_defi_tvl_data.csv.
+
+## Analyze
+
+### Data Loading
+
+```{r load-data}
+tvl_data <- read_csv("cleaned_defi_tvl_data.csv")
+tvl_data$Date <- as_date(tvl_data$Date)
+growth_data <- read_csv("tvl_growth_results.csv")
+summary(tvl_data)
+```
+
+### Monthly TVL Trends
+
+```{r monthly-tvl}
+
+monthly_tvl <- tvl_data %>%
+  mutate(Year = year(Date), Month = month(Date)) %>%
+  group_by(Protocol, Year, Month) %>%
+  summarise(Avg_TVL = mean(TVL_USD, na.rm = TRUE), .groups = "drop") %>%
+  mutate(Date = as_date(paste(Year, Month, "01", sep = "-")))
+```
+
+### Growth Calculation
+
+```{r growth}
+
+top_protocol <- growth_data %>%
+  arrange(desc(growth_percentage)) %>%
+  slice(1)
+top_protocol
+
+```
+The protocol with the highest growth is Ethena with 1083.84% growth.
+
+
+
+## Share
+
+### R Visualizations
+
+TVL Trends
+
+```{r line-plot, fig.width=10, fig.height=6}
+
+ggplot(monthly_tvl, aes(x = Date, y = Avg_TVL, color = Protocol)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 2) +
+  labs(title = "DeFi Protocol TVL Trends (Q1 2024 - Q1 2025)",
+       subtitle = "Monthly Average TVL in USD",
+       x = "Date", y = "TVL (USD)",
+       caption = "Data Source: DeFiLlama") +
+  theme_minimal(base_size = 14) +
+  scale_y_continuous(labels = dollar_format(scale = 1e-9, suffix = "B")) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") +
+  theme(legend.position = "bottom",
+        plot.title = element_text(face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Growth Comparison
+
+```{r bar-plot, fig.width=10, fig.height=6}
+
+ggplot(growth_data, aes(x = reorder(Protocol, -growth_percentage), y = growth_percentage, fill = Protocol)) +
+  geom_bar(stat = "identity", color = "black", size = 0.2) +
+  labs(title = "TVL Growth by DeFi Protocol",
+       subtitle = "Percentage Change from Q1 2024 to Q1 2025",
+       x = "Protocol", y = "Growth (%)",
+       caption = "Data Source: DeFiLlama via BigQuery") +
+  theme_minimal(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.title = element_text(face = "bold"),
+        legend.position = "none") +
+  scale_fill_brewer(palette = "Set3") +
+  geom_text(aes(label = sprintf("%.1f%%", growth_percentage)), vjust = -0.5, size = 4)
+```
+
+### Tableau Dashboard
+
+An interactive dashboard was created in Tableau Public, featuring:
+
+* Line chart: Monthly TVL trends for each protocol.
+
+* Bar chart: Growth percentages from Q1 2024 to Q1 2025 [or Jan to Mar 2024].
+
+* Infographic elements: Bold titles, icons (e.g., ), and vibrant colors.
+
+* View it here: View it here: [Tableau Dashboard](https://public.tableau.com/views/DeFiTVLExplorer/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link).
+
+### Insights
+
+* Ethena led with 1083.84% growth, likely due to the rapid adoption of its yield-bearing USDe stablecoin and institutional investments in its Converge blockchain.
+
+
+* Uniswap’s low 1.57% growth reflects its stability as a leading decentralized exchange, maintaining consistent trading volume despite broader DeFi market challenges.
+
+* Lido’s 9.71% TVL decline may be due to a $1.4B Bybit hack affecting stETH and competition from restaking protocols like EigenLayer.
+
+* All data and code available on my [GitHub repository](https://github.com/alexandergs0x/defi-tvl-explorer).
+
+
+### Act
+
+* Recommendation: Consider exploring Ethena’s USDe for yield opportunities, but research its synthetic stablecoin risks.
+
+* Next Steps: Monitor DeFi trends, especially stablecoin and restaking protocols.
+
+
+### Conclusion
+
+This project showcases skills in:
+
+* Python: Data fetching from DeFiLlama API.
+
+* Google Sheets: Data cleaning.
+
+* BigQuery SQL: Growth calculations.
+
+* R: Statistical analysis and visualizations.
+
+Tableau: Interactive dashboards.
+The code, data, and visuals are available on my [GitHub repository](https://github.com/alexandergs0x/defi-tvl-explorer).
+
+
+
+

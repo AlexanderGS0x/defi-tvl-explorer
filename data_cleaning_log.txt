@@ -1,0 +1,14 @@
+Data Cleaning Log (Google Sheets)
+- Date: 2025-05-19
+- Imported defi_tvl_data.csv into Google Sheets.
+- Initial row count: 1451 rows.
+- Missing values: Removed 2 rows with blank Protocol/Date/TVL_USD.
+- Duplicates: Removed 0 rows with duplicate Protocol/Date.
+- Date format: Converted Date column to YYYY-MM-DD.
+- TVL validation: Removed 0 rows with negative TVL_USD.
+- Outliers: No outliers found.
+- Sorted by Protocol (A-Z) and Date (A-Z).
+- Final row count: 1449 rows.
+- Protocols included: Aave, Compound, Curve, EigenLayer, Ethena, Lido, Maple, Uniswap.
+- Date range: 2024-01-01 to 2025-03-31.
+- Exported as cleaned_defi_tvl_data.csv.

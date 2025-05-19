@@ -1,0 +1,28 @@
+BigQuery SQL Analysis Notes
+- Date: 2025-05-19
+- Uploaded cleaned_defi_tvl_data.csv to BigQuery (defi-tvl-project.defi_tvl.tvl_data).
+- Ran SQL query to calculate TVL growth (Q1 2024 to Q1 2025 or Jan to Mar 2024).
+- Top protocol: Ethena with 1083.84% growth.
+- Saved results as tvl_growth_results.csv.
+- Saved query as tvl_growth.sql.
+
+R Analysis Notes (Posit Cloud)
+- Date: 2025-05-19
+- Uploaded cleaned_defi_tvl_data.csv and tvl_growth_results.csv to Posit Cloud.
+- Ran tvl_analysis.R to compute monthly TVL and create visualizations.
+- Visualizations: tvl_trends_line_plot.png (line chart), tvl_growth_bar_plot.png (bar chart).
+- Top protocol: Ethena with 1083.84 %% growth.
+- Saved tvl_analysis.R and plots.
+
+Tableau Dashboard Notes
+- Date: 2025-05-19
+- Created dashboard in Tableau Public using cleaned_defi_tvl_data.csv and tvl_growth_results.csv.
+- Visualizations: Line chart (TVL trends), Bar chart (growth percentages).
+- Dashboard: Infographic-style with title, pictographic icons, and footer.
+- Published to Tableau Public: https://public.tableau.com/views/DeFiTVLExplorer/Dashboard1?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link
+- Saved as DeFiTVLExplorer.twbx.
+
+GitHub Notes
+- Date: 2025-05-19
+- Created repository: https://github.com/alexandergs0x/defi-tvl-explorer
+- Uploaded project files.
